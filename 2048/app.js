@@ -1,5 +1,37 @@
 const LENGTH = 4;
 
+const table = document.createElement('table');
+const tbody = document.createElement('tbody');
+const tr = document.createElement('tr');
+const td = document.createElement('td');
+
+
+for(let i = 0; i < LENGTH; i++){
+    let newTr = tr.cloneNode(true);
+    for(let j = 0; j < LENGTH; j++){
+
+        let newTd = td.cloneNode(false);
+        newTd.classList.add('empty');
+        newTd.dataset.line = i + '';
+        newTd.dataset.column = j + '';
+
+        newTr.appendChild(newTd);
+    }
+
+    tbody.appendChild(newTr);
+}
+
+table.appendChild(tbody);
+
+let startRow = randomNumber(0, 3);
+let startCell = randomNumber(0, 3);
+table.rows[startRow].cells[startCell].innerText = '2';
+table.rows[startRow].cells[startCell].classList.add(`klass2`);
+
+document.body.appendChild(table);
+
+
+
 
 function getKey() {
     var key = event.keyCode;
@@ -21,42 +53,69 @@ function getKey() {
         default:
             return;
     }
-    if(move)
-    newElement();
-}
 
-let table = document.createElement('table');
-let tbody = document.createElement('tbody');
-let tr = document.createElement('tr');
-let td = document.createElement('td');
+    ifPeremoga();
 
-
-for(let i = 0; i < LENGTH; i++){
-    let newTr = tr.cloneNode(true);
-    for(let j = 0; j < LENGTH; j++){
-
-        let newTd = td.cloneNode(false);
-        newTd.classList.add('empty');//В ЭТОМ МЕСТЕ КЛАСС ДОБАВИЛСЯ КАК НУЖНО
-        newTd.dataset.line = i + '';
-        newTd.dataset.column = j + '';
-
-        newTr.appendChild(newTd);
+    if(ifNotExistFreeCells()){
+        if(ifNotExistNeighborSimilarCells()){
+            alert('GAME OVER');
+        }
     }
 
-    tbody.appendChild(newTr);
+    if(move)
+        newElement();
+
 }
-
-table.appendChild(tbody);
-
-let startRow = randomNumber(0, 3);
-let startCell = randomNumber(0, 3);
-table.rows[startRow].cells[startCell].innerText = '2';
-
-document.body.appendChild(table);
 
 function randomNumber(min, max) {
     return min + Math.floor(Math.random() * (max + 1 - min));
 }
+
+function ifPeremoga() {
+
+    for(let i = 0; i < LENGTH; ++i){
+        for(let j = 0; j < LENGTH; ++j){
+            if(table.rows[i].cells[j].innerText === '2048'){
+               /* const imgWrap = document.createElement('div');
+                const image = document.createElement('img');
+                image.setAttribute('src', 'images/win.jpg');
+                imgWrap.appendChild(image);*/
+               alert('PEREMOGA!!!!!');
+
+            }
+        }
+    }
+
+}
+
+
+function ifNotExistFreeCells(){
+    for(let i = 0; i < LENGTH; ++i){
+        for(let j = 0; j < LENGTH; ++j){
+            if(table.rows[i].cells[j].innerText === ''){
+                return false;
+            }
+        }
+    }
+    return true;
+
+}
+
+function ifNotExistNeighborSimilarCells() {
+    for (let i = 0; i < LENGTH; ++i) {
+        for (let j = 1; j < LENGTH; ++j) {
+            if (table.rows[j].cells[i].innerText === table.rows[j - 1].cells[i].innerText) {
+                return false;
+            }
+            if (table.rows[i].cells[j].innerText === table.rows[i].cells[j - 1].innerText) {
+                return false;
+            }
+
+        }
+    }
+    return true;
+}
+
 
 function ifExistEmptyCellBefore37() {
 
@@ -69,8 +128,8 @@ function ifExistEmptyCellBefore37() {
                     if (!table.rows[i].cells[j - 1].innerText) {
                         move = true;
                         table.rows[i].cells[j - 1].innerText = table.rows[i].cells[j].innerText;
-                        table.rows[i].cells[j].classList.remove(`klass${table.rows[i].cells[j].innerText}`);//ПОЧЕМУ ТО НЕ ДОБАВЛЯЕТ И НЕ УДАЛЯЕТ КЛАССЫ
-                        table.rows[i].cells[j - 1].classList.add(`klass${table.rows[i].cells[j].innerText}`);//ПОЧЕМУ ТО НЕ ДОБАВЛЯЕТ И НЕ УДАЛЯЕТ КЛАССЫ
+                        table.rows[i].cells[j].classList.remove(`klass${table.rows[i].cells[j].innerText}`);
+                        table.rows[i].cells[j - 1].classList.add(`klass${table.rows[i].cells[j].innerText}`);
                         table.rows[i].cells[j].innerText = '';
                     }
                 }
@@ -89,9 +148,10 @@ function ifExistFullSimmilarCellBefore37() {
             if (table.rows[i].cells[j].innerText) {
                 if (table.rows[i].cells[j].innerText === table.rows[i].cells[j - 1].innerText) {
                     move = true;
+                    table.rows[i].cells[j].classList.remove(`klass${table.rows[i].cells[j].innerText}`);
+                    table.rows[i].cells[j - 1].classList.remove(`klass${table.rows[i].cells[j].innerText}`);
                     table.rows[i].cells[j - 1].innerText = +table.rows[i].cells[j].innerText * 2;
-                    table.rows[i].cells[j].classList.remove(`klass${table.rows[i].cells[j].innerText}`);//ПОЧЕМУ ТО НЕ ДОБАВЛЯЕТ И НЕ УДАЛЯЕТ КЛАССЫ
-                    table.rows[i].cells[j - 1].classList.add(`klass${table.rows[i].cells[j - 1].innerText}`);//ПОЧЕМУ ТО НЕ ДОБАВЛЯЕТ И НЕ УДАЛЯЕТ КЛАССЫ
+                    table.rows[i].cells[j - 1].classList.add(`klass${table.rows[i].cells[j - 1].innerText}`);
                     table.rows[i].cells[j].innerText = '';
                     ifExistEmptyCellBefore37();// можно сделать какое-то условие что бы не гоняло в холостую при двух парах одинаковых ячеек в одной строке
 
@@ -113,6 +173,8 @@ function ifExistEmptyCellBefore38() {
                     if (!table.rows[j - 1].cells[i].innerText) {
                         move = true;
                         table.rows[j - 1].cells[i].innerText = table.rows[j].cells[i].innerText;
+                        table.rows[j].cells[i].classList.remove(`klass${table.rows[j].cells[i].innerText}`);
+                        table.rows[j - 1].cells[i].classList.add(`klass${table.rows[j].cells[i].innerText}`);
                         table.rows[j].cells[i].innerText = '';
                     }
                 }
@@ -130,6 +192,8 @@ function ifExistFullSimmilarCellBefore38() {
             if (table.rows[j].cells[i].innerText) {
                 if (table.rows[j].cells[i].innerText === table.rows[j-1].cells[i].innerText) {
                     move = true;
+                    table.rows[j].cells[i].classList.remove(`klass${table.rows[j].cells[i].innerText}`);
+                    table.rows[j - 1].cells[i].classList.remove(`klass${table.rows[j].cells[i].innerText}`);
                     table.rows[j - 1].cells[i].innerText = +table.rows[j].cells[i].innerText * 2;
                     table.rows[j - 1].cells[i].classList.add(`klass${table.rows[j - 1].cells[i].innerText}`);
                     table.rows[j].cells[i].innerText = '';
@@ -154,6 +218,8 @@ function ifExistEmptyCellBefore39(){
                     if (!table.rows[i].cells[j + 1].innerText) {
                         move = true;
                         table.rows[i].cells[j + 1].innerText = table.rows[i].cells[j].innerText;
+                        table.rows[i].cells[j].classList.remove(`klass${table.rows[i].cells[j].innerText}`);
+                        table.rows[i].cells[j + 1].classList.add(`klass${table.rows[i].cells[j].innerText}`);
                         table.rows[i].cells[j].innerText = '';
                     }
                 }
@@ -170,6 +236,8 @@ function ifExistFullSimmilarCellBefore39(){
             if (table.rows[i].cells[j].innerText) {
                 if (table.rows[i].cells[j].innerText === table.rows[i].cells[j + 1].innerText) {
                     move = true;
+                    table.rows[i].cells[j].classList.remove(`klass${table.rows[i].cells[j].innerText}`);
+                    table.rows[i].cells[j + 1].classList.remove(`klass${table.rows[i].cells[j].innerText}`);
                     table.rows[i].cells[j + 1].innerText = +table.rows[i].cells[j].innerText * 2;
                     table.rows[i].cells[j + 1].classList.add(`klass${table.rows[i].cells[j + 1].innerText}`);
                     table.rows[i].cells[j].innerText = '';
@@ -195,6 +263,8 @@ function ifExistEmptyCellBefore40() {
                     if (!table.rows[j + 1].cells[i].innerText) {
                         move = true;
                         table.rows[j + 1].cells[i].innerText = table.rows[j].cells[i].innerText;
+                        table.rows[j].cells[i].classList.remove(`klass${table.rows[j].cells[i].innerText}`);
+                        table.rows[j + 1].cells[i].classList.add(`klass${table.rows[j].cells[i].innerText}`);
                         table.rows[j].cells[i].innerText = '';
                     }
                 }
@@ -212,6 +282,8 @@ function ifExistFullSimmilarCellBefore40() {
             if (table.rows[j].cells[i].innerText) {
                 if (table.rows[j].cells[i].innerText === table.rows[j+1].cells[i].innerText) {
                     move = true;
+                    table.rows[j].cells[i].classList.remove(`klass${table.rows[j].cells[i].innerText}`);
+                    table.rows[j + 1].cells[i].classList.remove(`klass${table.rows[j].cells[i].innerText}`);
                     table.rows[j + 1].cells[i].innerText = +table.rows[j].cells[i].innerText * 2;
                     table.rows[j + 1].cells[i].classList.add(`klass${table.rows[j + 1].cells[i].innerText}`);
                     table.rows[j].cells[i].innerText = '';
@@ -271,8 +343,10 @@ function newElement() {
 
     if(TwoOrFour) {
         table.rows[arrForRows[NewRandRow]].cells[arrForCells[NewRandCell]].innerText = 4;
+        table.rows[arrForRows[NewRandRow]].cells[arrForCells[NewRandCell]].classList.add(`klass4`);
     }else{
         table.rows[arrForRows[NewRandRow]].cells[arrForCells[NewRandCell]].innerText = 2;
+        table.rows[arrForRows[NewRandRow]].cells[arrForCells[NewRandCell]].classList.add(`klass2`);
     }
 }
 
