@@ -6,6 +6,14 @@ const tr = document.createElement('tr');
 const td = document.createElement('td');
 
 
+const imgWrap = document.createElement('div');
+
+const h1 = document.createElement('h1');
+let newH1 = h1.cloneNode(false);
+newH1.innerText = '2048';
+document.body.appendChild(newH1);
+
+
 for(let i = 0; i < LENGTH; i++){
     let newTr = tr.cloneNode(true);
     for(let j = 0; j < LENGTH; j++){
@@ -34,7 +42,7 @@ document.body.appendChild(table);
 
 
 function getKey() {
-    var key = event.keyCode;
+    let key = event.keyCode;
 
     let move = false;
     switch(key){
@@ -58,7 +66,12 @@ function getKey() {
 
     if(ifNotExistFreeCells()){
         if(ifNotExistNeighborSimilarCells()){
-            alert('GAME OVER');
+            table.hidden = true;
+            imgWrap.classList.add('img-wrap');
+            const image = document.createElement('img');
+            image.setAttribute('src', 'images/lose.jpg');
+            imgWrap.appendChild(image);
+            document.body.appendChild(imgWrap);
         }
     }
 
@@ -76,11 +89,12 @@ function ifPeremoga() {
     for(let i = 0; i < LENGTH; ++i){
         for(let j = 0; j < LENGTH; ++j){
             if(table.rows[i].cells[j].innerText === '2048'){
-               /* const imgWrap = document.createElement('div');
+                table.hidden = true;
+                imgWrap.classList.add('img-wrap');
                 const image = document.createElement('img');
                 image.setAttribute('src', 'images/win.jpg');
-                imgWrap.appendChild(image);*/
-               alert('PEREMOGA!!!!!');
+                imgWrap.appendChild(image);
+                document.body.appendChild(imgWrap);
 
             }
         }
@@ -119,7 +133,7 @@ function ifNotExistNeighborSimilarCells() {
 
 function ifExistEmptyCellBefore37() {
 
-    var move = false;
+    let move = false;
     for (let i = 0; i < LENGTH; ++i) {
         for (let a = 0; a < LENGTH; ++a) {
             for (let j = 1; j < LENGTH - a; ++j) {
@@ -142,7 +156,7 @@ function ifExistEmptyCellBefore37() {
 
 
 function ifExistFullSimmilarCellBefore37() {
-    var move = false;
+    let move = false;
     for (let i = 0; i < LENGTH; ++i) {
         for (let j = 1; j < LENGTH; ++j) {
             if (table.rows[i].cells[j].innerText) {
@@ -164,7 +178,7 @@ function ifExistFullSimmilarCellBefore37() {
 
 function ifExistEmptyCellBefore38() {
 
-    var move = false;
+    let move = false;
     for (let i = 0; i < LENGTH; ++i) {
         for (let a = 0; a < LENGTH; ++a) {
             for (let j = 1; j < LENGTH - a; ++j) {
@@ -186,7 +200,7 @@ function ifExistEmptyCellBefore38() {
 
 
 function ifExistFullSimmilarCellBefore38() {
-    var move = false;
+    let move = false;
     for (let i = 0; i < LENGTH; ++i) {
         for (let j = 1; j < LENGTH; ++j) {
             if (table.rows[j].cells[i].innerText) {
@@ -207,7 +221,7 @@ function ifExistFullSimmilarCellBefore38() {
 }
 
 function ifExistEmptyCellBefore39(){
-    var move = false;
+    let move = false;
     let nolik;
     for (let i = 0; i < LENGTH; ++i) {
         for (let a = 0; a < LENGTH; ++a) {
@@ -230,7 +244,7 @@ function ifExistEmptyCellBefore39(){
 }
 
 function ifExistFullSimmilarCellBefore39(){
-    var move = false;
+    let move = false;
     for (let i = 0; i < LENGTH; ++i) {
         for (let j = LENGTH - 2; j >= 0; --j) {
             if (table.rows[i].cells[j].innerText) {
@@ -252,7 +266,7 @@ function ifExistFullSimmilarCellBefore39(){
 
 
 function ifExistEmptyCellBefore40() {
-    var move = false;
+    let move = false;
     let nolik;
     for (let i = 0; i < LENGTH; ++i) {
         for (let a = 0; a < LENGTH; ++a) {
@@ -276,7 +290,7 @@ function ifExistEmptyCellBefore40() {
 
 
 function ifExistFullSimmilarCellBefore40() {
-    var move = false;
+    let move = false;
     for (let i = 0; i < LENGTH; ++i) {
         for (let j = LENGTH - 2; j >= 0; --j) {
             if (table.rows[j].cells[i].innerText) {
@@ -299,7 +313,7 @@ function ifExistFullSimmilarCellBefore40() {
 
 function findRowsWithFreeCells() {
 
-    var arr = [];
+    let arr = [];
     let counter = 0;
     for(let i = 0; i < LENGTH; ++i){
         for(let j = 0; j < LENGTH; ++j){
@@ -315,7 +329,7 @@ function findRowsWithFreeCells() {
 
 function findLocationOfFreeCells(NumberOfRow){
 
-    var arr = [];
+    let arr = [];
     let counter = 0;
     for(let i = 0; i < LENGTH; ++i){
         if(!table.rows[NumberOfRow].cells[i].innerText){
